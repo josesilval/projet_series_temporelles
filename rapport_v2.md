@@ -1,6 +1,23 @@
 # Rapport Séries Temporelles
 Patricio Silva
 
+## Contenus
+1. [Intruduction](#introduction)
+2. [Objectif du projet](#objectif-du-projet)
+3. [Statistiques déscriptives](#statistiques-descriptives)
+4. [ARMA](#arma)
+    1. [Étude des résidus](#étude-des-résidus)
+    2. [Résponse impulsionnnellle](#réponse-impulsionnelle)
+    3. [Statistique Q](#statistique-q)
+5. [GARCH](#garch)
+    1. [Comparaison](#comparaison)
+    2. [Diagnostique du modèle](#diagnostic-du-modèle)
+6. [Racines unitaires](#racines-unitaires)
+7. [VAR](#var)
+8. [Coïntégration](#coïntégration)
+9. [Anexe: Code](#anexe-code)
+
+
 ## Introduction 
 La série temporelle à étudier pour ce projet est la variation mensuelle de l'IPC en France métropolitaine entre janvier 1996 et décembre 2025, ce qui donne une série de 360 observations mensuelles.
 
@@ -332,3 +349,31 @@ ce qui met en évidence le comportement supposé ci-dessus : les produits non fr
 Ensuite, les réponses aux chocs ont été étudiées :
 ![](figures/imp_resp_arma.png)
 Les chocs des variables sur elles-mêmes semblent s'éteindre après une réversion temporaire avant de s'approcher de zéro. Ce phénomène n'est pas trop étonnant, même s'il montre une certaine volatilité. Néanmoins, les effets de l'ASFP montrent une relation faible ou instable, qui n'est pas robuste statistiquement, ce qui pourrait indiquer que la relation est plutôt produite du bruit qu'une relation réelle. Ce comportement est également observé pour la relation inverse, ce qui pourrait témoigner d'une relation très faible entre les variables.
+
+## Coïntégration
+Pour la conïntégration, il faut tout d'abord faire un test de coïntégration: le test de Johansen. Les valeurs obtenus sont montrées ci-dessous:
+| r (H0) | trace statistic (lr1) | CV 90% | CV 95% | CV 99% | Decision (95%) |
+|--------------------|--------------------------|--------|--------|--------|----------------|
+| r = 0              | 216.6072                 | 13.4294| 15.4943| 19.9349| Rejette H0    |
+| r ≤ 1              | 27.7778                  | 2.7055 | 3.8415 | 6.6349 | Rejette H0    |
+
+Ceci montre que $r=2$, ce qui montre un régime de rang complet, ce qui montre qu'il n'y a pas de racines unitaires et que les séries sont $I(0)$ -raissonable, en vue des résultats précedentes -, ce qui ne correspod pas au cas de coïntégration, plutôt un de VAR (éventuellement aux niveaux). Malhereussement, il n'y a pas d'évidence de l'eficacité de ce modèle.
+
+## Conclusion
+
+L'étude de la variation mensuelle de l'IPC en France métropolitaine sur la période 1996–2025 a permis de mettre en évidence plusieurs propriétés structurelles de la série. D'abord, l'analyse descriptive a montré une distribution proche de la gaussienne, sans tendance ni saisonnalité apparente, avec une autocorrélation faible et à court terme. Ces caractéristiques ont orienté naturellement la modélisation vers un cadre ARMA.
+
+Parmi les spécifications testées, le modèle ARMA(1,1) s'est imposé selon les critères AIC et BIC, avec des résidus compatibles avec l'hypothèse de bruit blanc — confirmée par le test de Ljung-Box. L'analyse GARCH a ensuite révélé la présence d'effets de volatilité conditionnelle dans les résidus du modèle ARMA, mieux capturés par une distribution t de Student que par une gaussienne, avec $\nu \approx 5.2$. Le test LM a confirmé que le phénomène GARCH, bien présent dans les résidus ARMA, a été correctement absorbé par le modèle combiné. La stationnarité de la série a été vérifiée de façon robuste par le test ADF sous plusieurs spécifications de tendance, écartant définitivement l'hypothèse de racine unitaire.
+
+L'analyse multivariée par modèle VAR(12) sur les variations des aliments hors produits frais (ASFP) et des produits frais (FP) a permis de mettre en évidence une relation causale asymétrique au sens de Granger : l'ASFP influence significativement le FP, mais l'inverse n'est pas vérifié. Les réponses impulsionnelles, bien que traduisant une certaine instabilité à court terme, semblent cohérentes avec cette asymétrie. Enfin, le test de Johansen a indiqué un rang de coïntégration complet ($r=2$), ce qui confirme que les deux séries sont $I(0)$ et qu'un modèle VAR aux niveaux est approprié — l'approche VECM n'ayant pas de justification dans ce cas.
+
+En perspective, il pourrait être pertinent de traiter explicitement la saisonnalité du FP, visible dans ses fonctions d'autocorrélation, ainsi que d'explorer des spécifications SARIMA ou des modèles à facteurs pour mieux rendre compte de la dynamique commune entre les groupes de produits.
+
+## Anexe: Code
+Les codes utilisés pour ce projet ont été ajoutées au fichier zip, mais les données, à cause de leur taille, n'ont pas été ajoutées. Néanmois, ils sont facilement accesibles grâce au lien dans l'introduction.
+
+Les codes sont à utiliser de la façon suivante: le code 'get_data.py' processe les données pour le modèle ARMA: car_ipc.csv. Ensuite, le code ARMA ajuste des modèles ARMA avec une méthode robuste pour obtenir des tableaux avec les valeurs tel que le p-value, l'AIC et le BIC.
+
+Ensuite, pour l'analyse de ces resultat, le notebook univarie.ipynb est utilisé, ainsi que le modèle GARCH, d'où son nom. Pour les modèles multivariés le notebook multivarie.ipynb a été utilisé pour le création et l'analyse des méthodes multivariées: VAR et CI.
+
+Finalement, plusieurs fichiers csv on été crées pour l'analyse et la sauvegarde des résultats, ainsi que plusiers figures dans le dossier figures, utilisées pour la création de ce Rapport.

@@ -333,3 +333,11 @@ Ensuite, les réponses aux shocks ont été étudiées:
 ![](figures/imp_resp_arma.png)
 Les shocks des variables sur elle mêmes semblent s'éteigner après une réversion temporelle avant de s'approcher à zéro. Ceci n'est pas un phénomène trop étonnant, même s'ils montrent une certaine volatilité. Néanmois les effets de ASFP montre une rélation faible ou inestable, même pas robust statistiquement, pourrait indiquer que la rélation est plutôt produit du bruit qu'une relation réelle. Ce comportement est ainsi observé pour la rélation inverse, ce qui pourrait montrer une rélation très faible entre les variables.
 
+## Coïntégration
+Pour la conïntégration, il faut tout d'abord faire un test de coïntégration: le test de Johansen. Les valeurs obtenus sont montrées ci-dessous:
+| r (H0) | trace statistic (lr1) | CV 90% | CV 95% | CV 99% | Decision (95%) |
+|--------------------|--------------------------|--------|--------|--------|----------------|
+| r = 0              | 216.6072                 | 13.4294| 15.4943| 19.9349| Rejette H0    |
+| r ≤ 1              | 27.7778                  | 2.7055 | 3.8415 | 6.6349 | Rejette H0    |
+
+Ceci montre que $r=2$, ce qui montre un régime de rang complet, ce qui montre qu'il n'y a pas de racines unitaires et que les séries sont $I(0)$ -raissonable, en vue des résultats précedentes -, ce qui ne correspod pas au cas de coïntégration, plutôt un de VAR (éventuellement aux niveaux). Malhereussement, il n'y a pas d'évidence de l'eficacité de ce modèle.
